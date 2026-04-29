@@ -119,3 +119,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+CSRF_TRUSTED_ORIGINS = [
+    'https://web-production-8448.up.railway.app',
+]
