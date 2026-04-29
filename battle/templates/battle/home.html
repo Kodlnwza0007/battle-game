@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battle Game</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            background-color: #1a1a2e;
+            text-align: center;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            gap: 30px;
+        }
+        h1{
+            color: #ffd700;
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        p{
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        h2{
+            margin-bottom: 15px;
+        }
+        button{
+            background-color: red;
+            border-radius: 10px;
+            color: white;
+            padding: 15px 30px;
+            font-size: 20px;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        input{
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            text-align: center;
+        }
+        button:hover{
+            background-color: darkred;
+        }
+    </style>
+</head>
+<body>
+    <audio id="startSound" src="{% static 'battle/sounds/start.wav' %}"></audio>
+    <h1>⚔️ Battle Game</h1>
+    <h2>Welcome! Enter your name to start!</h2>
+    <form method="post" action="/start/">
+        {% csrf_token %}
+        <input type="text" name="player_name" placeholder="Enter you name...">
+        <br><br>
+        <h2>Choose Difficulty: </h2>
+        <br>
+        <button type="submit" name="difficulty" value="easy" style="background-color: green;"> Easy </button>
+        <button type="submit" name="difficulty" value="normal" style="background-color: orange;"> Normal </button>
+        <button type="submit" name="difficulty" value="hard" style="background-color: red;"> Hard </button>
+    </form>
+
+    <a href="/leaderboard/">
+        <button style="background-color: #ffd700; color: black;">🏆 Leaderboard</button>
+    </a>
+
+    <script>
+    document.querySelectorAll('form[action="/start/"] button[name="difficulty"]').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault()
+            let difficulty = this.value
+            let sound = new Audio("{% static 'battle/sounds/start.wav' %}")
+            sound.play()
+            setTimeout(function() {
+                let input = document.createElement('input')
+                input.type = 'hidden'
+                input.name = 'difficulty'
+                input.value = difficulty
+                document.querySelector('form[action="/start/"]').appendChild(input)
+                document.querySelector('form[action="/start/"]').submit()
+            }, 1500)
+        })
+    })
+    </script>
+</body>
+</html>

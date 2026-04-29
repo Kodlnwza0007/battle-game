@@ -1,0 +1,295 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battle Game</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            background-color: #1a1a2e;
+            text-align: center;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        h1{
+            color: #ffd700;
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        p{
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        h2{
+            margin-bottom: 10px;
+        }
+        button{
+            background-color: red;
+            border-radius: 10px;
+            color: white;
+            padding: 15px 30px;
+            font-size: 20px;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        input{
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            text-align: center;
+        }
+        button:hover{
+            background-color: darkred;
+        }
+        .health-bar-container{
+            width: 300px;
+            background-color: #333;
+            border-radius: 10px;
+            height: 25px;
+            margin: 5px auto;
+        }
+        .health-bar {
+            height: 25px;
+            border-radius: 10px;
+            background-color: #e74c3c;
+            transition: width 0.3s;
+        }
+        .battle-container{
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 80%;
+            margin: 20px auto;
+        }
+        .player-side{
+            text-align: center;
+            width: 40%;
+        }
+        .enemy-side{
+            text-align: center;
+            width: 40%;
+        }
+        .character-img{
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+        @keyframes shake{
+            0% { transform: translateX(0);}
+            25% { transform: translateX(-10px) }
+            50% { transform: translateX(-10px) }
+            75% { transform: translateX(-10px) }
+            100% { transform: translateX(0px) }
+        }
+        @keyframes flash{
+            0% { opacity: 1 }
+            50% { opacity: 0.2 }
+            100% { opacity: 1 }
+        }
+        @keyframes bounce {
+            0% { transform: translateY(0) }
+            50% { transform: translateY(20px) }
+            100% { transform: translateY(0) }
+        }
+        @keyframes playerAttack {
+    0% { transform: translateX(0) }
+    50% { transform: translateX(200px) }  /* moves right! */
+    100% { transform: translateX(0) }
+}
+
+@keyframes enemyAttack {
+    0% { transform: translateX(0) }
+    50% { transform: translateX(-200px) }  /* moves left! */
+    100% { transform: translateX(0) }
+}
+
+.playerAttack {
+    animation: playerAttack 0.5s ease;
+}
+
+.enemyAttack {
+    animation: enemyAttack 0.5s ease;
+}
+.shake{
+    animation: shake 0.5s ease;
+}
+.flash{
+    animation: flash 0.5s ease;
+}
+.bounce{
+    animation: bounce 0.8s ease;
+}
+    </style>
+</head>
+<body>
+    <audio id="attackSound" src="{% static 'battle/sounds/attack.wav' %}"></audio>
+    <audio id="winSound" src="{% static 'battle/sounds/win.wav' %}"></audio>
+    <audio id="gameoverSound" src="{% static 'battle/sounds/gameover.wav' %}"></audio>
+    <audio id="potionSound" src="{% static 'battle/sounds/potion.wav' %}"></audio>
+    <audio id="bgMusic" src="{% static 'battle/sounds/music.wav' %}" loop></audio>
+    
+    <h1>⚔️ Battle!</h1>
+    <button id="muteBtn" onclick="toggleMusic()" style="background-color: #333; font-size: 16px; padding: 10px 20px;">
+    🔊 Music
+    </button>
+    <p style="color: #ffd700; font-size: 20px;">🏆 Score: {{ score }}</p>
+    <p style="font-size: 18px;">
+        Difficulty:
+        {% if difficulty == 'easy'%}
+            <span style="color: green;">🟢 Easy</span>
+        {% endif %}
+
+        {% if difficulty == 'normal'%}
+            <span style="color: orange;">🟡 Normal</span>
+        {% endif %}
+
+        {% if difficulty == 'hard'%}
+            <span style="color: red;">🔴 Hard</span>
+        {% endif %}
+    </p>
+    <div class="battle-container">
+        <div class="player-side">
+            <img id="playerImg" class="character-img" src="{% static 'battle/images/player.png'%}" alt="Player">
+            <h2>Player: {{ player_name }} </h2>
+            <p>❤️ {{ player_health }}/{{ player_max_health }}</p>
+            <div class="health-bar-container">
+                <div class="health-bar" style="width: {{ player_health_percent }}% "></div>
+            </div>
+        </div>
+        <h2>⚔️ VS ⚔️</h2>
+        <div class="enemy-side">
+            <img id="enemyImg" class="character-img" src="{% static 'battle/images/'%}{{ enemy_name|lower }}.png" alt="Enemy">
+            <h2>Enemy: {{ enemy_name }}</h2>
+            <p>❤️ {{ enemy_health }}/{{ enemy_max_health }}</p>
+            <div class="health-bar-container">
+                <div class="health-bar" style="width: {{ enemy_health_percent }}%; background-color: #2ecc71;"></div>
+            </div>
+        </div>
+    </div>
+    <br>
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+    {% if game_over %}
+        {% if player_health <= 0 %}
+            <h2>💀 Game Over!<h2>
+            <a href="/">
+                <button>🔄 Play Again</button>
+            </a>
+        {% else %}
+            <h2>🎉 YOU WIN! 👑</h2>
+            <br><br>
+            <a href="/">
+                <button>🔄 Play Again</button>
+            </a>
+        {% endif %}
+    {% else %}
+    
+    {% if player_health_percent <= 80 and potion > 0 %}
+        <form method="post" action="/potion/">
+            {% csrf_token %}
+            <button type="submit" style="background-color: green;">
+                🧪 Use Potion (+30 HP) 
+            </button>
+        </form>
+    {% endif %}
+
+    <form method="POST" action="/attack/">
+        {% csrf_token %}
+        <button type="submit">⚔️ Attack!</button>
+    </form>
+    {% endif %}
+
+
+    <script>
+        if (!sessionStorage.getItem('bounced')) {
+        document.getElementById('playerImg').classList.add('bounce')
+        document.getElementById('enemyImg').classList.add('bounce')
+        sessionStorage.setItem('bounced', 'true')
+        }
+        {% if message %}
+        let enemyImg = document.getElementById('enemyImg')
+        enemyImg.classList.add('shake')
+        setTimeout(function(){
+            enemyImg.classList.remove('shake')
+        }, 500)
+        let playerImg = document.getElementById('playerImg')
+        playerImg.classList.add('flash')
+        setTimeout(function(){
+            playerImg.classList.remove('flash')
+        }, 500)
+        {% endif %}
+        let music =document.getElementById('bgMusic')
+        music.volume = 0.3
+        let saveTime = sessionStorage.getItem('musicTime')
+        if (saveTime){
+            music.currentTime = parseFloat(saveTime)
+        }
+
+        window.addEventListener('beforeunload', function(){
+            sessionStorage.setItem('musicTime', music.currentTime)
+        })
+        music.play()
+        
+        function toggleMusic() {
+        if (music.muted) {
+            music.muted = false
+            localStorage.setItem('musicMuted', 'false')  
+            document.getElementById('muteBtn').innerHTML = '🔊 Music'
+        } else {
+            music.muted = true
+            localStorage.setItem('musicMuted', 'true')  
+            document.getElementById('muteBtn').innerHTML = '🔇 Music'
+        }
+    }
+
+        {% if not game_over %}
+        document.querySelector('form[action="/attack/"] button').addEventListener('click', function(e) {
+            e.preventDefault()
+            let sound = new Audio("{% static 'battle/sounds/attack.wav' %}")
+            
+            document.getElementById('playerImg').classList.add('playerAttack')
+            sound.play()
+            
+            setTimeout(function() {
+                document.getElementById('playerImg').classList.remove('playerAttack')
+                document.getElementById('enemyImg').classList.add('enemyAttack')
+                
+                setTimeout(function() {
+                    document.getElementById('enemyImg').classList.remove('enemyAttack')
+                    document.querySelector('form[action="/attack/"]').submit()
+                }, 600)
+            }, 600)
+        })
+        {% endif %}
+
+        {% if message == '🧪 Potion used! +30 HP!' %}
+            document.getElementById('potionSound').play()
+        {% endif %}
+
+        {% if game_over and player_health > 0 %}
+            document.getElementById('winSound').play()
+        {% endif %}
+
+        {% if game_over and player_health <= 0 %}
+            document.getElementById('gameoverSound').play()
+        {% endif %}
+        
+
+
+    </script>
+</body>
+</html>
