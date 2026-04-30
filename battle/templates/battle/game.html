@@ -105,33 +105,66 @@
             100% { transform: translateY(0) }
         }
         @keyframes playerAttack {
-    0% { transform: translateX(0) }
-    50% { transform: translateX(200px) }  /* moves right! */
-    100% { transform: translateX(0) }
-}
+        0% { transform: translateX(0) }
+        50% { transform: translateX(200px) }  /* moves right! */
+        100% { transform: translateX(0) }
+        }
 
-@keyframes enemyAttack {
-    0% { transform: translateX(0) }
-    50% { transform: translateX(-200px) }  /* moves left! */
-    100% { transform: translateX(0) }
-}
+        @keyframes enemyAttack {
+            0% { transform: translateX(0) }
+            50% { transform: translateX(-200px) }  /* moves left! */
+            100% { transform: translateX(0) }
+        }
 
-.playerAttack {
-    animation: playerAttack 0.5s ease;
-}
+        .playerAttack {
+            animation: playerAttack 0.5s ease;
+        }
 
-.enemyAttack {
-    animation: enemyAttack 0.5s ease;
-}
-.shake{
-    animation: shake 0.5s ease;
-}
-.flash{
-    animation: flash 0.5s ease;
-}
-.bounce{
-    animation: bounce 0.8s ease;
-}
+        .enemyAttack {
+            animation: enemyAttack 0.5s ease;
+        }
+        .shake{
+            animation: shake 0.5s ease;
+        }
+        .flash{
+            animation: flash 0.5s ease;
+        }
+        .bounce{
+            animation: bounce 0.8s ease;
+        }
+        @media(max-width: 600px){
+            h1{
+                font-size: 32px;
+            }
+            h2{
+                font-size: 20px;
+            }
+            button{
+                padding: 20px 40px;
+                font-size: 22px;
+                width: 80%;
+            }
+            input{
+                width: 80%;
+                font-size: 18px;
+                padding: 15;
+            }
+            .battle-container{
+                flex-direction: column;
+                width: 100%;
+            }
+            .player-side .enemy-side{
+                width: 100%;
+            }
+            .character-img{
+                width: 120px;
+                height: 120;
+            }
+            .health-bar-container{
+                width: 800%;
+                margin: 5px auto;
+            }
+        }
     </style>
 </head>
 <body>

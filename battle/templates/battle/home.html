@@ -54,6 +54,39 @@
         button:hover{
             background-color: darkred;
         }
+        @media(max-width: 600px){
+            h1{
+                font-size: 32px;
+            }
+            h2{
+                font-size: 20px;
+            }
+            button{
+                padding: 20px 40px;
+                font-size: 22px;
+                width: 80%;
+            }
+            input{
+                width: 80%;
+                font-size: 18px;
+                padding: 15;
+            }
+            .battle-container{
+                flex-direction: column;
+                width: 100%;
+            }
+            .player-side .enemy-side{
+                width: 100%;
+            }
+            .character-img{
+                width: 120px;
+                height: 120;
+            }
+            .health-bar-container{
+                width: 800%;
+                margin: 5px auto;
+            }
+        }
     </style>
 </head>
 <body>
