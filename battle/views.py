@@ -63,7 +63,7 @@ def attack(request):
 
     if enemy_health <= 0:
         if enemy_name == 'Goblin':
-            player_health += 35
+            player_health = 70
             if player_health > 70:
                 player_health = 70
 
@@ -91,7 +91,7 @@ def attack(request):
             return render(request, 'battle/game.html', context)
         
         elif enemy_name == 'Orc':
-            player_health += 50
+            player_health = 120
             if player_health > 120:
                 player_health = 120
 
