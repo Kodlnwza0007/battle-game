@@ -334,6 +334,15 @@
             })
         })
 
+        document.addEventListener('visibilitychange', function(){
+            if (document.hidden){
+                music.pause()
+            }else{
+                music.play()
+            }
+                
+        })
+
     </script>
 </body>
 </html>
